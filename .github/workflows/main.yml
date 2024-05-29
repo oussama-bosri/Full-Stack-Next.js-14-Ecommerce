@@ -1,17 +1,56 @@
-name: CI
+name: CI for Website and Dashboard
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-website:
+    name: Build Website
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd WebSite
+          npm install
+
+      - name: Build website
+        run: |
+          cd WebSite
+          npm run build
+
+  build-dashboard:
+    name: Build Dashboard
+    runs-on: ubuntu-latest
+    needs: build-website
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          cd ecommerse-strapi
+          npm install
+
+      - name: Build dashboard
+        run: |
+          cd ecommerse-strapi
+          npm run build
+
